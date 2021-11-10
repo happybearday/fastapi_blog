@@ -9,6 +9,7 @@ class Blog(Base):
     body = Column(String)
     published_at = Column(Boolean)
 
+
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, index=True)

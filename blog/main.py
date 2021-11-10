@@ -2,9 +2,12 @@ import uvicorn
 from fastapi import FastAPI, Depends, status, Response, HTTPException
 from . import models, schemas
 from .database import engine, SessionLocal
+from .hashing import Hash
 from sqlalchemy.orm import Session
 from fastapi.encoders import jsonable_encoder
 from typing import List
+
+
 app = FastAPI()
 models.Base.metadata.create_all(engine)
 
@@ -68,7 +71,7 @@ def show(id: int, db: Session = Depends(get_db)):
 @app.post("/user")
 def create(request: schemas.User, db: Session = Depends(get_db)):
     new_user = models.User(email=request.email,
-                           name=request.name, password=request.password)
+                           name=request.name, password=Hash.bcrypt(request.password))
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
