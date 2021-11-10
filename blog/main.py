@@ -4,7 +4,7 @@ from . import models, schemas
 from .database import engine, SessionLocal
 from sqlalchemy.orm import Session
 from fastapi.encoders import jsonable_encoder
-
+from typing import List
 app = FastAPI()
 models.Base.metadata.create_all(engine)
 
@@ -47,13 +47,13 @@ def upgrade(id: int, request: schemas.Blog, db: Session = Depends(get_db)):
     return "updated"
 
 
-@app.get("/blog", status_code=status.HTTP_200_OK)
+@app.get("/blog", status_code=status.HTTP_200_OK, response_model=List[schemas.ShowBlog])
 def all(db: Session = Depends(get_db)):
     blogs = db.query(models.Blog).all()
     return blogs
 
 
-@app.get("/blog/{id}")
+@app.get("/blog/{id}", status_code=200, response_model=schemas.ShowBlog)
 def show(id: int, db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id).first()
     if not blog:
