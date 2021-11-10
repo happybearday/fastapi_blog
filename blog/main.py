@@ -19,7 +19,8 @@ def get_db():
 
 @app.post("/blog", status_code=status.HTTP_201_CREATED)
 def create(request: schemas.Blog, db: Session = Depends(get_db)):
-    new_blog = models.Blog(title=request.title, body=request.body, published_at=request.published_at)
+    new_blog = models.Blog(
+        title=request.title, body=request.body, published_at=request.published_at)
     db.add(new_blog)
     db.commit()
     db.refresh(new_blog)
@@ -30,7 +31,8 @@ def create(request: schemas.Blog, db: Session = Depends(get_db)):
 def destroy(id: int, db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id)
     if not blog.first():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Blog with id {id} is not available")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Blog with id {id} is not available")
     blog.delete(synchronize_session=False)
     db.commit()
     return 'done'
@@ -41,7 +43,8 @@ def upgrade(id: int, request: schemas.Blog, db: Session = Depends(get_db)):
     data = jsonable_encoder(request)
     blog = db.query(models.Blog).filter(models.Blog.id == id)
     if not blog.first():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Blog with id {id} is not available")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Blog with id {id} is not available")
     blog.update(data)
     db.commit()
     return "updated"
@@ -57,5 +60,16 @@ def all(db: Session = Depends(get_db)):
 def show(id: int, db: Session = Depends(get_db)):
     blog = db.query(models.Blog).filter(models.Blog.id == id).first()
     if not blog:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Blog with id {id} is not available")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Blog with id {id} is not available")
     return blog
+
+
+@app.post("/user")
+def create(request: schemas.User, db: Session = Depends(get_db)):
+    new_user = models.User(email=request.email,
+                           name=request.name, password=request.password)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user

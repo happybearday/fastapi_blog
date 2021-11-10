@@ -7,7 +7,15 @@ class Blog(BaseModel):
     body: str
     published_at: Optional[bool]
 
+
 class ShowBlog(BaseModel):
     title: str
+
     class Config():
         orm_mode = True
+
+
+class User(BaseModel):
+    name: str
+    email: str
+    password: str
