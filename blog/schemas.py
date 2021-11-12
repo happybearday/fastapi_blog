@@ -34,6 +34,7 @@ class ShowUser(User):
 
 class ShowBlog(BaseModel):
     title: str
+    body: str
     creator: ShowUser
 
     class Config():
