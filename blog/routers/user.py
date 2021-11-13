@@ -4,10 +4,10 @@ from fastapi import Depends, status, HTTPException
 from sqlalchemy.orm import Session
 from .. import schemas, database, models, hashing
 
-router = APIRouter()
+router = APIRouter(prefix="/user", tags=["Users"])
 
 
-@router.post("/user", status_code=status.HTTP_201_CREATED, response_model=schemas.ShowUser, tags=["users"])
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.ShowUser)
 def create(request: schemas.User, db: Session = Depends(database.get_db)):
     new_user = models.User(email=request.email,
                            name=request.name, password=hashing.Hash.bcrypt(request.password))
@@ -17,13 +17,13 @@ def create(request: schemas.User, db: Session = Depends(database.get_db)):
     return new_user
 
 
-@router.get("/user", status_code=status.HTTP_200_OK, response_model=List[schemas.ShowUser], tags=["users"])
+@router.get("/", status_code=status.HTTP_200_OK, response_model=List[schemas.ShowUser])
 def all_users(db: Session = Depends(database.get_db)):
     users = db.query(models.User).all()
     return users
 
 
-@router.get("/user/{id}", status_code=200, response_model=schemas.ShowUser, tags=["users"])
+@router.get("/{id}", status_code=200, response_model=schemas.ShowUser)
 def show_users(id: int, db: Session = Depends(database.get_db)):
     user = db.query(models.User).filter(models.User.id == id).first()
     if not user:
