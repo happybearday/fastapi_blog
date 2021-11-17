@@ -44,3 +44,12 @@ class ShowBlog(BaseModel):
 class Login(BaseModel):
     username: str
     password: str
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    user: Optional[str] = None
