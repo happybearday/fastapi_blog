@@ -4,7 +4,7 @@ from fastapi import status, HTTPException
 from .. import schemas, models, hashing
 
 
-def create(request: schemas.Blog, db: Session):
+def create(request: schemas.User, db: Session):
     new_user = models.User(email=request.email,
                            name=request.name, password=hashing.Hash.bcrypt(request.password))
     db.add(new_user)
